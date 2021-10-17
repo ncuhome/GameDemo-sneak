@@ -8,23 +8,25 @@ public class EnemyNavObj : MonoBehaviour
     List<Vector3> patrolList=new List<Vector3>();
     int patrolListIndex;
     bool isTimerRun;
-    List<Vector3> interestList=new List<Vector3>();
-    bool isExcited;
+    Vector3 interestPoint;
+    bool isPatrol;
     NavMeshAgent agent;
 
     [Tooltip("巡逻路线父物体，将会以其中子物体的命名字典序顺序巡逻（大概）")]
     public GameObject patrolPointObj;
     [Tooltip("巡逻在某个地点停留多久")]
-    public float waitTime;
+    public float patrolWaitTime=1f;
+    [Tooltip("在兴趣点停留多久")]
+    public float interestWaitTime=2f;
 
-    //巡逻地点半径大小
+    //精度半径大小
     const float PATROL_POINT_RADIUS = 0.2f;
 
     void Start()
     {
         isTimerRun = false;
         agent = GetComponent<NavMeshAgent>();
-        isExcited = false;
+        isPatrol = true;
         patrolList.Add(transform.position);
         for(int i=0;i<patrolPointObj.transform.childCount; ++i) {
             Transform point = patrolPointObj.transform.GetChild(i);
@@ -34,26 +36,53 @@ public class EnemyNavObj : MonoBehaviour
         agent.SetDestination(patrolList[patrolListIndex]);
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (isExcited) {
-            //TODO 发现兴奋点后作出的反应
+        //兴奋状态/巡逻状态
+        if (!isPatrol) {
+            if(!isTimerRun && agent.remainingDistance < PATROL_POINT_RADIUS) {
+                StartCoroutine(interestWaitTimer());
+            }
         }
         else if (!isTimerRun && agent.remainingDistance < PATROL_POINT_RADIUS) {
-            StartCoroutine(WaitTimer());
+            StartCoroutine(patrolWaitTimer());
         }
     }
 
-    IEnumerator WaitTimer() {
+    public bool SetInterestPoint(Vector3 point) {
+        NavMeshPath path = new NavMeshPath();
+        bool canArrive = agent.CalculatePath(point, path);
+        if (canArrive) {
+            agent.SetPath(path);
+            isPatrol = false;
+        }
+        return canArrive;
+    }
+
+    IEnumerator patrolWaitTimer() {
         isTimerRun = true;
-        float times = waitTime;
+        float times = patrolWaitTime;
         while (times > 0) {
             times -= Time.deltaTime;
             yield return 0;
         }
-        Debug.Log(agent.SetDestination(patrolList[patrolListIndex]));
-        patrolListIndex = patrolListIndex + 1;
-        patrolListIndex %= patrolList.Count;
+        if (isPatrol) {
+            agent.SetDestination(patrolList[patrolListIndex]);
+            patrolListIndex = patrolListIndex + 1;
+            patrolListIndex %= patrolList.Count;
+        }
         isTimerRun = false; 
+    }
+
+    IEnumerator interestWaitTimer() {
+        isTimerRun = true;
+        float times = interestWaitTime;
+        while (times > 0) {
+            times -= Time.deltaTime;
+            yield return 0;
+        }
+        agent.SetDestination(patrolList[patrolListIndex]);
+        isPatrol = true;
+        isTimerRun = false;
     }
 }
