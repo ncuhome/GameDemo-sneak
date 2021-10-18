@@ -384,7 +384,7 @@ GameObject:
   - component: {fileID: 802742423}
   - component: {fileID: 802742422}
   - component: {fileID: 802742421}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -754,7 +754,7 @@ GameObject:
   - component: {fileID: 1387526938}
   - component: {fileID: 1387526937}
   - component: {fileID: 1387526936}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -921,8 +921,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   watchWaitTime: 0.3
-  watchAngle: 60
-  watchLine: 5
+  watchArc: 0.5
+  watchLine: 10
   watchLenght: 2
 --- !u!1 &2127811570
 GameObject:
