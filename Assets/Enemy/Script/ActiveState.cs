@@ -12,6 +12,9 @@ public class ActiveState : MonoBehaviour
     public float watchLenght = 2;
     float sqrtWatchLenght;
 
+    [Tooltip("尸体预制体")]
+    public GameObject Body;
+
     /// <summary>
     /// 静态区域
     /// </summary>
@@ -19,12 +22,21 @@ public class ActiveState : MonoBehaviour
 
     const int layer = (1 << 7) | (1 << 8);
     EnemyNavObj navObj;
-
+    
     private void Start() {
         watchArc *= Mathf.PI;
         sqrtWatchLenght = watchLenght * watchLenght;
         navObj = GetComponent<EnemyNavObj>();
         StartCoroutine(WatchTimer());
+    }
+    
+    public bool BeAttack(Vector3 attackPos) {
+        if (Vector3.Dot(transform.forward, attackPos - transform.position) < 0) {
+            GameObject.Instantiate(Body,transform.position,transform.rotation,null);
+            Destroy(gameObject);
+            return true;
+        }
+        return false;
     }
 
     IEnumerator WatchTimer() {
@@ -36,7 +48,7 @@ public class ActiveState : MonoBehaviour
             }
             foreach(Transform target in interestObjectList) {
                 Vector3 dir = target.position - transform.position;
-                if ((target.position - transform.position).sqrMagnitude < sqrtWatchLenght &&
+                if (dir.sqrMagnitude < sqrtWatchLenght &&
                     Vector3.Dot(transform.forward, dir.normalized) > 0 &&
                     Mathf.Acos(Vector3.Dot(transform.forward,dir.normalized))< watchArc) {
                     if(!Physics.Linecast(transform.position,target.position,(1 << 7))) {
