@@ -15,15 +15,11 @@ public class ActiveState : MonoBehaviour
     [Tooltip("尸体预制体")]
     public GameObject Body;
 
-    /// <summary>
-    /// 静态区域
-    /// </summary>
-    public static List<Transform> interestObjectList=new List<Transform>();
-
     const int layer = (1 << 7) | (1 << 8);
     EnemyNavObj navObj;
     
     private void Start() {
+        NPCManager.Instace.AddToGuardList(transform);
         watchArc *= Mathf.PI;
         sqrtWatchLenght = watchLenght * watchLenght;
         navObj = GetComponent<EnemyNavObj>();
@@ -46,7 +42,12 @@ public class ActiveState : MonoBehaviour
                 timer -= Time.deltaTime;
                 yield return 0;
             }
-            foreach(Transform target in interestObjectList) {
+            bool needClear=false;
+            foreach(Transform target in NPCManager.Instace.interestObjectList) {
+                if (target == null) {
+                    needClear = true;
+                    break;
+                }
                 Vector3 dir = target.position - transform.position;
                 if (dir.sqrMagnitude < sqrtWatchLenght &&
                     Vector3.Dot(transform.forward, dir.normalized) > 0 &&
@@ -60,7 +61,13 @@ public class ActiveState : MonoBehaviour
                     }
                 }
             }
-            timer = watchWaitTime;
+            if (!needClear) {
+                timer = watchWaitTime;
+            } else {
+                timer = 0;
+                NPCManager.Instace.ClearInterestList();
+            }
+            
         }
     }
 }

@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class ThrowCoin : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject sight;
+    public GameObject coin;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
