@@ -19,6 +19,10 @@ public class ActiveState : MonoBehaviour
     EnemyNavObj navObj;
     
     private void Start() {
+        if (transform == null || NPCManager.Instace == null) {
+            Debug.LogWarning(transform);
+            Debug.LogWarning(NPCManager.Instace);
+        }
         NPCManager.Instace.AddToGuardList(transform);
         watchArc *= Mathf.PI;
         sqrtWatchLenght = watchLenght * watchLenght;

@@ -11,7 +11,7 @@ public class NPCManager : MonoBehaviour
     static public NPCManager Instace = null;
     public List<Transform> interestObjectList = new List<Transform>();
     public List<Transform> guardList = new List<Transform>();
-    void Start()
+    void Awake()
     {
         if (Instace == null) {
             Instace = this;

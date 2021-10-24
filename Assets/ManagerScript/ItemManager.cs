@@ -18,14 +18,17 @@ public class ItemManager : MonoBehaviour
     List<Text> texts = new List<Text>();
     static public ItemManager Instace=null;
 
-    private void Start() {
+    private void Awake() {
         if (Instace == null) {
             Instace = this;
         } else {
             Debug.LogWarning("¶à¸ö" + gameObject.name);
             Destroy(gameObject);
         }
-        foreach(GameObject obj in TextUI) {
+    }
+
+    private void Start() {
+        foreach (GameObject obj in TextUI) {
             Text text = obj.GetComponent<Text>();
             if (text != null) {
                 texts.Add(text);
