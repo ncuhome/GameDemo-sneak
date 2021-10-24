@@ -7,7 +7,7 @@ public class AddMyToInterest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ActiveState.interestObjectList.Add(this.transform);
+        NPCManager.Instace.interestObjectList.Add(transform);
     }
 
     // Update is called once per frame
